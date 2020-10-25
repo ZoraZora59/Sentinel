@@ -15,17 +15,12 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
+import com.alibaba.csp.sentinel.dashboard.domain.vo.MetricVo;
 import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
+import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.csp.sentinel.util.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +29,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.csp.sentinel.util.StringUtil;
-
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
-import com.alibaba.csp.sentinel.dashboard.domain.vo.MetricVo;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author leyou
@@ -46,7 +39,7 @@ import com.alibaba.csp.sentinel.dashboard.domain.vo.MetricVo;
 @RequestMapping(value = "/metric", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MetricController {
 
-    private static Logger logger = LoggerFactory.getLogger(MetricController.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricController.class);
 
     private static final long maxQueryIntervalMs = 1000 * 60 * 60;
 
@@ -76,7 +69,7 @@ public class MetricController {
             desc = true;
         }
         if (endTime == null) {
-            endTime = System.currentTimeMillis();
+            endTime = TimeUtil.currentTimeMillis();
         }
         if (startTime == null) {
             startTime = endTime - 1000 * 60 * 5;
@@ -110,7 +103,7 @@ public class MetricController {
         }
         final Map<String, Iterable<MetricVo>> map = new ConcurrentHashMap<>();
         logger.debug("topResource={}", topResource);
-        long time = System.currentTimeMillis();
+        long time = TimeUtil.currentTimeMillis();
         for (final String resource : topResource) {
             List<MetricEntity> entities = metricStore.queryByAppAndResourceBetween(
                 app, resource, startTime, endTime);
@@ -119,7 +112,7 @@ public class MetricController {
             Iterable<MetricVo> vosSorted = sortMetricVoAndDistinct(vos);
             map.put(resource, vosSorted);
         }
-        logger.debug("queryTopResourceMetric() total query time={} ms", System.currentTimeMillis() - time);
+        logger.debug("queryTopResourceMetric() total query time={} ms", TimeUtil.currentTimeMillis() - time);
         Map<String, Object> resultMap = new HashMap<>(16);
         resultMap.put("totalCount", resources.size());
         resultMap.put("totalPage", totalPage);
@@ -145,7 +138,7 @@ public class MetricController {
             return Result.ofFail(-1, "identity can't be null or empty");
         }
         if (endTime == null) {
-            endTime = System.currentTimeMillis();
+            endTime = TimeUtil.currentTimeMillis();
         }
         if (startTime == null) {
             startTime = endTime - 1000 * 60;

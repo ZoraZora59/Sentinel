@@ -15,6 +15,9 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
+import com.alibaba.csp.sentinel.dashboard.domain.dto.NodeInfoDTO;
+
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -41,11 +44,20 @@ public interface MachineDiscovery {
     /**
      * Remove the given machine instance from the application registry.
      *
-     * @param app the application name of the machine
-     * @param ip machine IP
+     * @param app  the application name of the machine
+     * @param ip   machine IP
      * @param port machine port
      * @return true if removed, otherwise false
      * @since 1.5.0
      */
     boolean removeMachine(String app, String ip, int port);
+
+    /**
+     * 批量删除已经注册的节点
+     *
+     * @param app   the application name of the machine
+     * @param nodes 节点参数
+     * @return 删除的个数
+     */
+    int removeMachineBatch(String app, Collection<NodeInfoDTO> nodes);
 }

@@ -15,11 +15,12 @@
  */
 package com.alibaba.csp.sentinel.dashboard.domain.vo;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
+import com.alibaba.csp.sentinel.util.TimeUtil;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 
 /**
  * @author leyou
@@ -28,7 +29,7 @@ public class MetricVo implements Comparable<MetricVo> {
     private Long id;
     private String app;
     private Long timestamp;
-    private Long gmtCreate = System.currentTimeMillis();
+    private Long gmtCreate = TimeUtil.currentTimeMillis();
     private String resource;
     private Long passQps;
     private Long blockQps;

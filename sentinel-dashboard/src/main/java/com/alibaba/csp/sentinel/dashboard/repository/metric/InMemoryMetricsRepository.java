@@ -45,7 +45,6 @@ public class InMemoryMetricsRepository implements MetricsRepository<MetricEntity
 
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-
     @Override
     public void save(MetricEntity entity) {
         if (entity == null || StringUtil.isBlank(entity.getApp())) {
@@ -119,7 +118,7 @@ public class InMemoryMetricsRepository implements MetricsRepository<MetricEntity
         if (resourceMap == null) {
             return results;
         }
-        final long minTimeMs = System.currentTimeMillis() - 1000 * 60;
+        final long minTimeMs = TimeUtil.currentTimeMillis() - 1000 * 60;
         Map<String, MetricEntity> resourceCount = new ConcurrentHashMap<>(32);
 
         readWriteLock.readLock().lock();

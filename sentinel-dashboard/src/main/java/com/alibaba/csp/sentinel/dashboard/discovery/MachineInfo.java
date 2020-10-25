@@ -15,10 +15,11 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
-import java.util.Objects;
-
 import com.alibaba.csp.sentinel.dashboard.config.DashboardConfig;
 import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.csp.sentinel.util.TimeUtil;
+
+import java.util.Objects;
 
 public class MachineInfo implements Comparable<MachineInfo> {
 
@@ -105,7 +106,7 @@ public class MachineInfo implements Comparable<MachineInfo> {
     }
     
     public boolean isHealthy() {
-        long delta = System.currentTimeMillis() - lastHeartbeat;
+        long delta = TimeUtil.currentTimeMillis() - lastHeartbeat;
         return delta < DashboardConfig.getUnhealthyMachineMillis();
     }
     
@@ -116,7 +117,7 @@ public class MachineInfo implements Comparable<MachineInfo> {
      */
     public boolean isDead() {
         if (DashboardConfig.getAutoRemoveMachineMillis() > 0) {
-            long delta = System.currentTimeMillis() - lastHeartbeat;
+            long delta = TimeUtil.currentTimeMillis() - lastHeartbeat;
             return delta > DashboardConfig.getAutoRemoveMachineMillis();
         }
         return false;

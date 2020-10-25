@@ -15,26 +15,6 @@
  */
 package com.alibaba.csp.sentinel.dashboard.metric;
 
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.nio.charset.Charset;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.alibaba.csp.sentinel.Constants;
 import com.alibaba.csp.sentinel.concurrent.NamedThreadFactory;
 import com.alibaba.csp.sentinel.config.SentinelConfig;
@@ -42,10 +22,10 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.MetricEntity;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppInfo;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
+import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
 import com.alibaba.csp.sentinel.node.metric.MetricNode;
 import com.alibaba.csp.sentinel.util.StringUtil;
-
-import com.alibaba.csp.sentinel.dashboard.repository.metric.MetricsRepository;
+import com.alibaba.csp.sentinel.util.TimeUtil;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
@@ -61,6 +41,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.ThreadPoolExecutor.DiscardPolicy;
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Fetch metric of machines.
  *
@@ -75,23 +63,23 @@ public class MetricFetcher {
     private static final long FETCH_INTERVAL_SECOND = 6;
     private static final Charset DEFAULT_CHARSET = Charset.forName(SentinelConfig.charset());
     private final static String METRIC_URL_PATH = "metric";
-    private static Logger logger = LoggerFactory.getLogger(MetricFetcher.class);
+    private static final Logger logger = LoggerFactory.getLogger(MetricFetcher.class);
     private final long intervalSecond = 1;
 
-    private Map<String, AtomicLong> appLastFetchTime = new ConcurrentHashMap<>();
+    private final Map<String, AtomicLong> appLastFetchTime = new ConcurrentHashMap<>();
 
     @Autowired
     private MetricsRepository<MetricEntity> metricStore;
     @Autowired
     private AppManagement appManagement;
 
-    private CloseableHttpAsyncClient httpclient;
+    private final CloseableHttpAsyncClient httpclient;
 
     @SuppressWarnings("PMD.ThreadPoolCreationRule")
-    private ScheduledExecutorService fetchScheduleService = Executors.newScheduledThreadPool(1,
-        new NamedThreadFactory("sentinel-dashboard-metrics-fetch-task"));
-    private ExecutorService fetchService;
-    private ExecutorService fetchWorker;
+    private final ScheduledExecutorService fetchScheduleService = Executors.newScheduledThreadPool(1,
+            new NamedThreadFactory("sentinel-dashboard-metrics-fetch-task"));
+    private final ExecutorService fetchService;
+    private final ExecutorService fetchWorker;
 
     public MetricFetcher() {
         int cores = Runtime.getRuntime().availableProcessors() * 2;
@@ -99,8 +87,8 @@ public class MetricFetcher {
         int queueSize = 2048;
         RejectedExecutionHandler handler = new DiscardPolicy();
         fetchService = new ThreadPoolExecutor(cores, cores,
-            keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
-            new NamedThreadFactory("sentinel-dashboard-metrics-fetchService"), handler);
+                keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
+                new NamedThreadFactory("sentinel-dashboard-metrics-fetchService"), handler);
         fetchWorker = new ThreadPoolExecutor(cores, cores,
             keepAliveTime, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize),
             new NamedThreadFactory("sentinel-dashboard-metrics-fetchWorker"), handler);
@@ -190,7 +178,7 @@ public class MetricFetcher {
         final AtomicLong success = new AtomicLong();
         final AtomicLong fail = new AtomicLong();
 
-        long start = System.currentTimeMillis();
+        long start = TimeUtil.currentTimeMillis();
         /** app_resource_timeSecond -> metric */
         final Map<String, MetricEntity> metricMap = new ConcurrentHashMap<>(16);
         final CountDownLatch latch = new CountDownLatch(machines.size());
@@ -251,7 +239,7 @@ public class MetricFetcher {
         } catch (Exception e) {
             logger.info(msg + " metric, wait http client error:", e);
         }
-        long cost = System.currentTimeMillis() - start;
+        long cost = TimeUtil.currentTimeMillis() - start;
         //logger.info("finished " + msg + " metric for " + app + ", time intervalMs [" + startTime + ", " + endTime
         //    + "], total machines=" + machines.size() + ", dead=" + dead + ", fetch success="
         //    + success + ", fetch fail=" + fail + ", time cost=" + cost + " ms");
@@ -259,7 +247,7 @@ public class MetricFetcher {
     }
 
     private void doFetchAppMetric(final String app) {
-        long now = System.currentTimeMillis();
+        long now = TimeUtil.currentTimeMillis();
         long lastFetchMs = now - MAX_LAST_FETCH_INTERVAL_MS;
         if (appLastFetchTime.containsKey(app)) {
             lastFetchMs = Math.max(lastFetchMs, appLastFetchTime.get(app).get() + 1000);

@@ -15,14 +15,15 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-
+import com.alibaba.csp.sentinel.dashboard.domain.dto.NodeInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class AppManagement implements MachineDiscovery {
@@ -46,10 +47,22 @@ public class AppManagement implements MachineDiscovery {
     public long addMachine(MachineInfo machineInfo) {
         return machineDiscovery.addMachine(machineInfo);
     }
-    
+
     @Override
     public boolean removeMachine(String app, String ip, int port) {
         return machineDiscovery.removeMachine(app, ip, port);
+    }
+
+    /**
+     * 批量删除已经注册的节点
+     *
+     * @param app   the application name of the machine
+     * @param nodes 节点参数
+     * @return 删除的个数
+     */
+    @Override
+    public int removeMachineBatch(String app, Collection<NodeInfoDTO> nodes) {
+        return machineDiscovery.removeMachineBatch(app, nodes);
     }
 
     @Override

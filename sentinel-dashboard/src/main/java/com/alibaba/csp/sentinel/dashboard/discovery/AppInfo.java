@@ -15,14 +15,11 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.alibaba.csp.sentinel.dashboard.config.DashboardConfig;
+import com.alibaba.csp.sentinel.util.TimeUtil;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AppInfo {
 
@@ -30,7 +27,7 @@ public class AppInfo {
 
     private Integer appType = 0;
 
-    private Set<MachineInfo> machines = ConcurrentHashMap.newKeySet();
+    private final Set<MachineInfo> machines = ConcurrentHashMap.newKeySet();
 
     public AppInfo() {}
 
@@ -107,8 +104,8 @@ public class AppInfo {
             if (healthyCount == 0) {
                 // No healthy machines.
                 return machines.stream()
-                    .max(Comparator.comparingLong(MachineInfo::getLastHeartbeat))
-                    .map(e -> System.currentTimeMillis() - e.getLastHeartbeat() < threshold)
+                        .max(Comparator.comparingLong(MachineInfo::getLastHeartbeat))
+                        .map(e -> TimeUtil.currentTimeMillis() - e.getLastHeartbeat() < threshold)
                     .orElse(false);
             }
         }

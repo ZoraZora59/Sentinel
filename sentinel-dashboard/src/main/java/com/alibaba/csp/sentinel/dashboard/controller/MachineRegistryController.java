@@ -16,11 +16,11 @@
 package com.alibaba.csp.sentinel.dashboard.controller;
 
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
-import com.alibaba.csp.sentinel.util.StringUtil;
-
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineDiscovery;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
+import com.alibaba.csp.sentinel.util.StringUtil;
+import com.alibaba.csp.sentinel.util.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class MachineRegistryController {
             return Result.ofFail(-1, "your port not set yet");
         }
         String sentinelVersion = StringUtil.isEmpty(v) ? "unknown" : v;
-        version = version == null ? System.currentTimeMillis() : version;
+        version = version == null ? TimeUtil.currentTimeMillis() : version;
         try {
             MachineInfo machineInfo = new MachineInfo();
             machineInfo.setApp(app);
@@ -65,7 +65,7 @@ public class MachineRegistryController {
             machineInfo.setIp(ip);
             machineInfo.setPort(port);
             machineInfo.setHeartbeatVersion(version);
-            machineInfo.setLastHeartbeat(System.currentTimeMillis());
+            machineInfo.setLastHeartbeat(TimeUtil.currentTimeMillis());
             machineInfo.setVersion(sentinelVersion);
             appManagement.addMachine(machineInfo);
             return Result.ofSuccessMsg("success");

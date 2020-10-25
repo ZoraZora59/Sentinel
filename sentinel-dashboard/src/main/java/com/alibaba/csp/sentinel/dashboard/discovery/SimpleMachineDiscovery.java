@@ -15,16 +15,13 @@
  */
 package com.alibaba.csp.sentinel.dashboard.discovery;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.alibaba.csp.sentinel.dashboard.domain.dto.NodeInfoDTO;
+import com.alibaba.csp.sentinel.util.AssertUtil;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import com.alibaba.csp.sentinel.util.AssertUtil;
-
-import org.springframework.stereotype.Component;
 
 /**
  * @author leyou
@@ -50,6 +47,29 @@ public class SimpleMachineDiscovery implements MachineDiscovery {
             return appInfo.removeMachine(ip, port);
         }
         return false;
+    }
+
+    /**
+     * 批量删除已经注册的节点
+     *
+     * @param app   the application name of the machine
+     * @param nodes 节点参数
+     * @return 删除的个数
+     */
+    @Override
+    public int removeMachineBatch(String app, Collection<NodeInfoDTO> nodes) {
+        AssertUtil.assertNotBlank(app, "app name cannot be blank");
+        AssertUtil.assertNotEmpty(nodes, "nodes cannot be empty");
+        AppInfo appInfo = apps.get(app);
+        int counter = 0;
+        if (appInfo != null) {
+            for (NodeInfoDTO node : nodes) {
+                if (appInfo.removeMachine(node.getIp(), node.getPort())) {
+                    counter++;
+                }
+            }
+        }
+        return counter;
     }
 
     @Override
