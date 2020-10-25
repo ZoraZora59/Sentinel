@@ -98,13 +98,11 @@
             <artifactId>fastjson</artifactId>
         </dependency>
 
-        <!-- for Nacos rule publisher sample -->
         <dependency>
             <groupId>com.alibaba.csp</groupId>
             <artifactId>sentinel-datasource-nacos</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
-        <!-- for Apollo rule publisher sample -->
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-openapi</artifactId>
@@ -131,11 +129,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>com.github.stefanbirkner</groupId>
-        	<artifactId>system-rules</artifactId>
-        	<version>1.16.1</version>
-        	<scope>test</scope>
+            <groupId>com.github.stefanbirkner</groupId>
+            <artifactId>system-rules</artifactId>
+            <version>1.16.1</version>
+            <scope>test</scope>
         </dependency>
+        <!-- Elastic Search Start -->
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+            <version>7.6.2</version>
+        </dependency>
+        <!-- Elastic Search End -->
     </dependencies>
 
     <build>

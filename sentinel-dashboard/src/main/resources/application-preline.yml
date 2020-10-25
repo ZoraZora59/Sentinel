@@ -1,0 +1,11 @@
+auth:
+  enabled: true
+sentinel:
+  nacos:
+    config:
+      addr: pre-nacos.yourWebSite.com:80
+      nameSpace: PRELINE
+elasticsearch:
+  host: host1
+  port: 9200
+spring:

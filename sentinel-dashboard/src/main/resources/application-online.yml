@@ -1,0 +1,11 @@
+auth:
+  enabled: true
+sentinel:
+  nacos:
+    config:
+      addr: nacos.yourWebSite.com:80
+      nameSpace: ONLINE
+elasticsearch:
+  host: host1,host2,host3
+  port: 9200,9200,9200
+spring:
