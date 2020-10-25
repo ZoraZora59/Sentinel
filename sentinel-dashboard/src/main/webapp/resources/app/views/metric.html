@@ -13,14 +13,27 @@
           <span class="brand" style="font-size: 13px;">
             <i class="fa fa-sort-amount-asc" aria-hidden="true" ng-show="!isDescOrder"></i>
             <i class="fa fa-sort-amount-desc" aria-hidden="true" ng-show="isDescOrder"></i>
-            {{metricTypeDesc}}&nbsp;实时监控
+            {{metricTypeDesc}}&nbsp;实时监控  &nbsp;&nbsp;&nbsp;&nbsp;查询时间:
           </span>
-          <button class="btn btn-outline-primary" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setDescOrder()"
-            ng-if="!isDescOrder">降序</button>
-          <button class="btn btn-outline-primary" style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setAscOrder()"
-            ng-if="isDescOrder">升序</button>
+            <div style="display: inline-block;margin-left: 10px;">
+                <selectize
+                        style="display: inline-block;width: 100px"
+                        config="selectConfig"
+                        options="selectOptions"
+                        ng-model="selectInput"
+                />
+            </div>
+            <button class="btn btn-outline-primary"
+                    style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setDescOrder()"
+                    ng-if="!isDescOrder">降序
+            </button>
+            <button class="btn btn-outline-primary"
+                    style="float: right;margin-right: 10px;height: 30px;font-size: 12px;" ng-click="setAscOrder()"
+                    ng-if="isDescOrder">升序
+            </button>
 
-          <input class="form-control witdh-200" placeholder="关键字" ng-model="serviceQuery" ng-change="searchService()" style="margin-right: 20px;">
+            <input class="form-control witdh-200" placeholder="关键字" ng-model="serviceQuery" ng-change="searchService()"
+                   style="margin-right: 20px;">
         </div>
         <!--.tools-header -->
         <!--<div id="g2container"></div>-->

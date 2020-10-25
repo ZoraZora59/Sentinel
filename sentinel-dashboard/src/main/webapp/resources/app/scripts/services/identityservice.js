@@ -9,9 +9,9 @@ app.service('IdentityService', ['$http', function ($http) {
       searchKey: searchKey
     };
     return $http({
-      url: 'resource/machineResource.json',
-      params: param,
-      method: 'GET'
+        url: '/resource/machineResource.json',
+        params: param,
+        method: 'GET'
     });
   };
   this.fetchClusterNodeOfMachine = function (ip, port, searchKey) {
@@ -22,9 +22,9 @@ app.service('IdentityService', ['$http', function ($http) {
       searchKey: searchKey
     };
     return $http({
-      url: 'resource/machineResource.json',
-      params: param,
-      method: 'GET'
+        url: '/resource/machineResource.json',
+        params: param,
+        method: 'GET'
     });
   };
 }]);
