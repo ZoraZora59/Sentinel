@@ -1,5 +1,13 @@
 <img src="https://user-images.githubusercontent.com/9434884/43697219-3cb4ef3a-9975-11e8-9a9c-73f4f537442d.png" alt="Sentinel Logo" width="50%">
 
+# 项目须知：
+
+本项目与原Sentinel项目区别为：
+
+- **本项目将心跳数据持久化到了ES中。**取代了原项目保存在内存中的方式。
+- **本项目将流控规则持久化到了Nacos中。**取代了原项目保存在内存中的方式。
+- **本项目修改了控制台页面。**簇点流控目前将默认以Nacos数据源方式保存；实时监控允许调整监控时间段；机器管理中允许批量删除下线机器；服务列表中将包含‘gateway’关键字的服务置顶。
+
 # Sentinel: The Sentinel of Your Microservices
 
 [![Travis Build Status](https://travis-ci.org/alibaba/Sentinel.svg?branch=master)](https://travis-ci.org/alibaba/Sentinel)
